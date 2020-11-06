@@ -8,8 +8,7 @@ enumfromTo x y | x <= y = x : enumfromTo (x+1) y
 
 -- Exercício 2 
 enumfromThenTo :: Int -> Int -> Int -> [Int]
-enumfromThenTo x y z | (x < y && x <= z) || (x > y && x > z) = x: enumfromThenTo y (2*y-x) z
-                     | x == z = [x] 
+enumfromThenTo x y z | (x < y && x <= z) || (x > y && x >= z) = x: enumfromThenTo y (2*y-x) z
                      | otherwise = [] 
 
 -- Exercício 3 
@@ -20,8 +19,8 @@ enumfromThenTo x y z | (x < y && x <= z) || (x > y && x > z) = x: enumfromThenTo
 
 -- Exercício 4
 (!!!) :: [a] -> Int -> a
-(!!!) (h:t) n | n == 0 = h
-              | n > 0 = (!!!) t (n-1) 
+(!!!) (h:t) 0 = h 
+(!!!) (h:t) n = (!!!) t (n-1) 
 
 -- Exercício 5
 reverse' :: [a] -> [a] 
@@ -63,8 +62,9 @@ intersperse' _ l = l
 
 -- Exercício 12
 group' :: Eq a => [a] -> [[a]]
-group' (x:y:t) | x == y = ([x] ++ head (group' (y:t))) : tail (group' (y:t)) 
+group' (x:y:t) | x == y = ([x] ++ head (afterGrouping)) : tail (afterGrouping) 
                | otherwise = [x] : (group' (y:t))
+    where afterGrouping = group' (y:t)
 group' l = [l]
 
 -- Exercício 13
