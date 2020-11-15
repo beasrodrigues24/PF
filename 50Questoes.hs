@@ -30,14 +30,14 @@ reverse' (h:t) = reverse' t ++ [h]
 -- Exercício 6
 take' :: Int -> [a] -> [a]
 take' _ [] = []
-take' n (h:t) | n == 0 = [] 
-              | n > 0 = h: take' (n-1) t 
+take' n (h:t) | n <= 0 = [] 
+              | otherwise = h: take' (n-1) t 
 
 -- Exercício 7
 drop' :: Int -> [a] -> [a] 
-drop' 0 l = l 
 drop' _ [] = [] 
-drop' n (h:t) | n > 0 = drop' (n-1) t  
+drop' n l@(h:t) | n > 0 = drop' (n-1) t  
+                | otherwise = l
 
 -- Exercício 8
 zip' :: [a] -> [b] -> [(a,b)]
@@ -132,11 +132,10 @@ delete' x (h:t) | x == h = t
 (\\\):: Eq a => [a] -> [a] -> [a] 
 (\\\) l [] = l 
 (\\\) [] l = [] 
-(\\\) l (y:ys) = (\\\) (delete' y l) ys
+(\\\) l (h:t) = (\\\) (delete' h l) t
 
 -- Exercício 23 
 union' :: Eq a => [a] -> [a] -> [a]
-union' [] l = l 
 union' l [] = l 
 union' l (h:t) | elem h l = union' l t 
                | otherwise = union' (l ++ [h]) t 
@@ -257,6 +256,8 @@ constroiMSet [] = []
 constroiMSet l = auxConstroi 1 l 
 
 -- Exercício 42
+
+-- menos eficiente (percorre o dobro das vezes a lista)
 auxLeft :: [Either a b] -> [a] 
 auxLeft [] = [] 
 auxLeft ((Left a):t) = a: auxLeft t 
@@ -310,7 +311,7 @@ maisCentral :: [Posicao] -> Posicao
 maisCentral [p] = p 
 maisCentral (p1:p2:t) | distanciaAoQuadrado p1 centro <= distanciaAoQuadrado p2 centro = maisCentral (p1:t)
                       | otherwise = maisCentral (p2:t)
-         where centro = Pos 0 0
+    where centro = Pos 0 0
 
 -- Exercício 48 
 naoIguais :: Posicao -> Posicao -> Bool 
@@ -334,5 +335,12 @@ contaNaoVermelhos [] = 0
 contaNaoVermelhos (h:t) | show h /= "Vermelho" = 1 + contaNaoVermelhos t 
                         | otherwise = contaNaoVermelhos t 
 
+-- com case
+contaNaoVermelhos' :: [Semaforo] -> Int 
+contaNaoVermelhos' [] = 0
+contaNaoVermelhos' (h:t) = case h of 
+                            Vermelho -> contaNaoVermelhos' t 
+                            _ -> 1 + contaNaoVermelhos' t
+
 interseccaoOK :: [Semaforo] -> Bool 
-interseccaoOK l = contaNaoVermelhos l <= 1
+interseccaoOK l = contaNaoVermelhos' l <= 1
